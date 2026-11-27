@@ -16,7 +16,7 @@ class NumberConstant {
   static const radiusPill = 17.0;
   static const radiusDiscount = 12.0;
 
-  static const offerAspectRatio = 285 / 130;
+  static const offerAspectRatio = 285 / 150;
   static const productCardAspectRatio = 174 / 204;
   static const categoryAspectRatio = 1.0;
   static const heroAspectRatio = 414 / 420;
