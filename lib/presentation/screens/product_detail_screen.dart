@@ -4,6 +4,7 @@ import 'package:ecommerce_shop_ui/constants/number_constant.dart';
 import 'package:ecommerce_shop_ui/constants/string_const.dart';
 import 'package:ecommerce_shop_ui/core/app_colors.dart';
 import 'package:ecommerce_shop_ui/core/app_data.dart';
+import 'package:ecommerce_shop_ui/core/app_motion.dart';
 import 'package:ecommerce_shop_ui/core/app_textstyles.dart';
 import 'package:ecommerce_shop_ui/core/asset_res.dart';
 import 'package:ecommerce_shop_ui/presentation/providers/product_detail_provider.dart';
@@ -116,15 +117,21 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
             itemCount: 3,
             controller: _pageController,
             onPageChanged: provider.selectImage,
-            itemBuilder: (context, index) => Center(
-              child: Transform.rotate(
+            itemBuilder: (context, index) {
+              final image = Transform.rotate(
                 angle: 15.35 * math.pi / 180,
                 child: FractionallySizedBox(
                   widthFactor: 0.72,
                   child: Image.asset(provider.product.image, fit: .contain,),
                 ),
-              ),
-            ),
+              );
+              // Single Hero tag — only on the active page to avoid duplicates.
+              return Center(
+                child: index == provider.imageIndex
+                    ? Hero(tag: 'product-image-${provider.product.id}', child: image)
+                    : image,
+              );
+            },
           ),
           Positioned(
             top: topInset + 8,
@@ -168,19 +175,35 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
             for (var i = 0; i < colors.length; i++)
               GestureDetector(
                 onTap: () => provider.selectColor(i),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors[i],
-                    shape: .circle,
-                    border: colors[i] == AppColors.whiteColor ? .all(color: AppColors.borderColor) : null,
-                  ),
-                  child: Padding(
-                    padding: .all(9),
-                    child: Opacity(
-                      opacity: provider.selectedColorIndex == i ? 1 : 0,
-                      child: SvgPicture.asset(
-                        AssetRes.icCheck,
-                        colorFilter: .mode(colors[i] == AppColors.whiteColor ? AppColors.blackColor : AppColors.whiteColor, .srcIn),
+                child: AnimatedScale(
+                  scale: provider.selectedColorIndex == i ? 1.08 : 1,
+                  duration: AppMotion.fast,
+                  curve: AppMotion.curve,
+                  child: AnimatedContainer(
+                    duration: AppMotion.fast,
+                    curve: AppMotion.curve,
+                    decoration: BoxDecoration(
+                      color: colors[i],
+                      shape: .circle,
+                      border: .all(
+                        color: provider.selectedColorIndex == i
+                            ? AppColors.primaryOrange
+                            : colors[i] == AppColors.whiteColor
+                                ? AppColors.borderColor
+                                : Colors.transparent,
+                        width: provider.selectedColorIndex == i ? 2 : 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: .all(9),
+                      child: AnimatedOpacity(
+                        opacity: provider.selectedColorIndex == i ? 1 : 0,
+                        duration: AppMotion.fast,
+                        curve: AppMotion.curve,
+                        child: SvgPicture.asset(
+                          AssetRes.icCheck,
+                          colorFilter: .mode(colors[i] == AppColors.whiteColor ? AppColors.blackColor : AppColors.whiteColor, .srcIn),
+                        ),
                       ),
                     ),
                   ),
@@ -198,13 +221,16 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
       mainAxisAlignment: .center,
       children: [
         for (var i = 0; i < 3; i++)
-          DecoratedBox(
+          AnimatedContainer(
+            duration: AppMotion.fast,
+            curve: AppMotion.curve,
+            width: i == activeIndex ? 18 : 12,
+            height: 12,
             decoration: BoxDecoration(
               color: i == activeIndex ? AppColors.activeDot : AppColors.whiteColor,
-              shape: .circle,
+              borderRadius: .circular(i == activeIndex ? 6 : 12),
               border: i == activeIndex ? null : .all(color: AppColors.borderColor),
             ),
-            child: const Padding(padding: .all(6), child: SizedBox.shrink(),),
           ),
       ],
     );
@@ -247,18 +273,24 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
           Expanded(
             child: GestureDetector(
               onTap: () => provider.selectSize(size),
-              child: DecoratedBox(
+              child: AnimatedContainer(
+                duration: AppMotion.fast,
+                curve: AppMotion.curve,
                 decoration: BoxDecoration(
                   color: provider.selectedSize == size ? AppColors.sizeSelectedBg : AppColors.whiteColor,
                   borderRadius: .circular(NumberConstant.radiusChip),
-                  border: provider.selectedSize == size ? null : .all(color: AppColors.borderColor),
+                  border: .all(
+                    color: provider.selectedSize == size ? Colors.transparent : AppColors.borderColor,
+                  ),
                 ),
                 child: Padding(
                   padding: .symmetric(vertical: 12),
                   child: Center(
-                    child: Text(
-                      size,
+                    child: AnimatedDefaultTextStyle(
+                      duration: AppMotion.fast,
+                      curve: AppMotion.curve,
                       style: provider.selectedSize == size ? AppTextStyles.sizeLabelSelected : AppTextStyles.sizeLabel,
+                      child: Text(size),
                     ),
                   ),
                 ),
@@ -270,7 +302,7 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
   }
 
   Widget _buildAddToCart(BuildContext context) {
-    return GestureDetector(
+    return _PressScaleButton(
       onTap: () => context.go(NamedRoutes.cart.routeName),
       child: DecoratedBox(
         decoration: BoxDecoration(color: AppColors.primaryOrange, borderRadius: .circular(NumberConstant.radiusLarge)),
@@ -290,5 +322,35 @@ class _ProductDetailBodyState extends State<_ProductDetailBody> {
       buffer.write(digits[i]);
     }
     return buffer.toString();
+  }
+}
+
+class _PressScaleButton extends StatefulWidget {
+  const _PressScaleButton({required this.onTap, required this.child});
+
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  State<_PressScaleButton> createState() => _PressScaleButtonState();
+}
+
+class _PressScaleButtonState extends State<_PressScaleButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _pressed ? 0.97 : 1,
+        duration: AppMotion.fast,
+        curve: AppMotion.curve,
+        child: widget.child,
+      ),
+    );
   }
 }
