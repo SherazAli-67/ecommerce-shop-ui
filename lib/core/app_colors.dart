@@ -24,4 +24,9 @@ class AppColors {
   static const headerCircle = Color(0x40D9D9D9);
   static const qtyBorder = Color(0x80F16A26);
   static const activeDot = Color(0x80F16A26);
+
+  static const cartThumbWatch = Color(0x40B0AB7B);
+  static const cartThumbHeadphones = Color(0x40CC6369);
+  static const cartThumbShirt = Color(0xFFD9E0E6);
+  static const cartThumbNike = Color(0x40B07B7B);
 }
