@@ -2,6 +2,7 @@ import 'package:ecommerce_shop_ui/constants/number_constant.dart';
 import 'package:ecommerce_shop_ui/constants/string_const.dart';
 import 'package:ecommerce_shop_ui/core/app_colors.dart';
 import 'package:ecommerce_shop_ui/core/app_data.dart';
+import 'package:ecommerce_shop_ui/core/app_motion.dart';
 import 'package:ecommerce_shop_ui/core/app_textstyles.dart';
 import 'package:ecommerce_shop_ui/core/asset_res.dart';
 import 'package:ecommerce_shop_ui/core/models/offer_model.dart';
@@ -9,6 +10,7 @@ import 'package:ecommerce_shop_ui/core/models/product_model.dart';
 import 'package:ecommerce_shop_ui/presentation/providers/home_provider.dart';
 import 'package:ecommerce_shop_ui/routing/router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -67,13 +69,10 @@ class _HomeScreenBody extends StatelessWidget {
 
   Widget _buildHeaderAction({required String icon}) {
     return DecoratedBox(
-      //headerCircle, .circle
-      decoration: BoxDecoration(color: Colors.transparent, shape: .circle),
+      decoration: BoxDecoration(color: AppColors.headerCircle, shape: .circle),
       child: Padding(
         padding: .all(10.5),
-        //icons, blackColor
-        // child: const SizedBox(),
-        // child: SvgPicture.asset(icon, colorFilter: .mode(AppColors.blackColor, .srcIn),),
+        child: SvgPicture.asset(icon, colorFilter: .mode(AppColors.blackColor, .srcIn),),
       ),
     );
   }
@@ -86,12 +85,11 @@ class _HomeScreenBody extends StatelessWidget {
         Row(
           spacing: 4,
           children: [
-            //${StringConst.greetingPrefix}${StringConst.userName}, greeting,
-            //icHandWave
+            Text('${StringConst.greetingPrefix}${StringConst.userName}', style: AppTextStyles.greeting,),
+            const _WavingHandIcon(),
           ],
         ),
-        //startShopping
-        Text('', style: AppTextStyles.subtitle,),
+        Text(StringConst.startShopping, style: AppTextStyles.subtitle,),
       ],
     );
   }
@@ -118,8 +116,7 @@ class _HomeScreenBody extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      //offer.backgroundColor
-      decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.radiusLarge)),
+      decoration: BoxDecoration(color: offer.backgroundColor, borderRadius: .circular(NumberConstant.radiusLarge)),
       clipBehavior: .hardEdge,
       child: Stack(
         children: [
@@ -127,8 +124,7 @@ class _HomeScreenBody extends StatelessWidget {
             Positioned(
               right: -8,
               bottom: -4,
-              child: const SizedBox(),
-              // child: Image.asset(offer.image!, height: height * 0.85, fit: .contain,),
+              child: Image.asset(offer.image!, height: height * 0.85, fit: .contain,),
             ),
           Padding(
             padding: .fromLTRB(19, 24, 19, 16),
@@ -138,16 +134,13 @@ class _HomeScreenBody extends StatelessWidget {
               children: [
                 SizedBox(
                   width: width * 0.55,
-                  //offer.title
-                  child: Text('', style: AppTextStyles.offerTitle,),
+                  child: Text(offer.title, style: AppTextStyles.offerTitle,),
                 ),
                 DecoratedBox(
-                  //ctaBackgroundColor
-                  decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.radiusPill)),
+                  decoration: BoxDecoration(color: offer.ctaBackgroundColor, borderRadius: .circular(NumberConstant.radiusPill)),
                   child: Padding(
                     padding: .symmetric(horizontal: 16, vertical: 10),
-                    //offer.cta
-                    child: Text('', style: AppTextStyles.offerCta.copyWith(color: offer.ctaTextColor),),
+                    child: Text(offer.cta, style: AppTextStyles.offerCta.copyWith(color: offer.ctaTextColor),),
                   ),
                 ),
               ],
@@ -162,10 +155,8 @@ class _HomeScreenBody extends StatelessWidget {
     return Row(
       mainAxisAlignment: .spaceBetween,
       children: [
-        //topCategories
-        //seeAll
-        Text('', style: AppTextStyles.sectionTitle,),
-        Text('', style: AppTextStyles.seeAll,),
+        Text(StringConst.topCategories, style: AppTextStyles.sectionTitle,),
+        Text(StringConst.seeAll, style: AppTextStyles.seeAll,),
       ],
     );
   }
@@ -181,20 +172,28 @@ class _HomeScreenBody extends StatelessWidget {
               onTap: () => provider.selectCategory(i),
               child: AspectRatio(
                 aspectRatio: NumberConstant.categoryAspectRatio,
-                child: DecoratedBox(
+                child: AnimatedContainer(
+                  duration: AppMotion.fast,
+                  curve: AppMotion.curve,
                   decoration: BoxDecoration(
-                    // color: provider.selectedCategoryIndex == i ? AppColors.primaryOrangeAlt : AppColors.surfaceAlt,
+                    color: provider.selectedCategoryIndex == i ? AppColors.primaryOrangeAlt : AppColors.surfaceAlt,
                     borderRadius: .circular(NumberConstant.radiusSmall),
-                    // border: .all(color: AppColors.borderColor, width: NumberConstant.categoryBorderWidth),
+                    border: .all(color: AppColors.borderColor, width: NumberConstant.categoryBorderWidth),
                   ),
                   child: Center(
                     child: Padding(
                       padding: .all(12),
-                      child: const SizedBox(),
-                      /*child: SvgPicture.asset(
-                        AppData.categories[i].icon,
-                        colorFilter: .mode(provider.selectedCategoryIndex == i ? AppColors.whiteColor : AppColors.blackColor, .srcIn),
-                      ),*/
+                      child: TweenAnimationBuilder<Color?>(
+                        tween: ColorTween(
+                          end: provider.selectedCategoryIndex == i ? AppColors.whiteColor : AppColors.blackColor,
+                        ),
+                        duration: AppMotion.fast,
+                        curve: AppMotion.curve,
+                        builder: (context, color, _) => SvgPicture.asset(
+                          AppData.categories[i].icon,
+                          colorFilter: .mode(color ?? AppColors.blackColor, .srcIn),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -215,7 +214,10 @@ class _HomeScreenBody extends StatelessWidget {
         childAspectRatio: NumberConstant.productCardAspectRatio,
       ),
       itemCount: AppData.products.length,
-      itemBuilder: (context, index) => _buildProductCard(context, product: AppData.products[index]),
+      itemBuilder: (context, index) => _StaggeredFadeSlide(
+        index: index,
+        child: _buildProductCard(context, product: AppData.products[index]),
+      ),
     );
   }
 
@@ -225,8 +227,7 @@ class _HomeScreenBody extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.push(NamedRoutes.productDetail.productPath(product.id)),
       child: DecoratedBox(
-        //surfaceColor
-        decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.radiusLarge)),
+        decoration: BoxDecoration(color: AppColors.surfaceColor, borderRadius: .circular(NumberConstant.radiusLarge)),
         child: Padding(
           padding: .all(12),
           child: Column(
@@ -236,8 +237,12 @@ class _HomeScreenBody extends StatelessWidget {
               Expanded(
                 child: Stack(
                   children: [
-                    //product.image, fit.contain
-                    Positioned.fill(child: const SizedBox(),),
+                    Positioned.fill(
+                      child: Hero(
+                        tag: 'product-image-${product.id}',
+                        child: Image.asset(product.image, fit: .contain,),
+                      ),
+                    ),
                     Positioned(
                       left: 0,
                       top: 0,
@@ -245,35 +250,23 @@ class _HomeScreenBody extends StatelessWidget {
                         decoration: BoxDecoration(color: AppColors.whiteColor, borderRadius: .circular(NumberConstant.radiusDiscount)),
                         child: Padding(
                           padding: .symmetric(horizontal: 6, vertical: 4),
-                          //product.discountLabel
-                          child: Text('', style: AppTextStyles.discountBadge,),
+                          child: Text(product.discountLabel, style: AppTextStyles.discountBadge,),
                         ),
                       ),
                     ),
                     Positioned(
                       right: 0,
                       top: 0,
-                      child: GestureDetector(
+                      child: _FavoriteHeartButton(
+                        isFavorite: isFavorite,
                         onTap: () => provider.toggleFavorite(product.id),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(color: AppColors.whiteColor, shape: .circle),
-                          child: Padding(
-                            padding: .all(5),
-                            child: SizedBox(),
-                            /*child: SvgPicture.asset(
-                              AssetRes.icHeart,
-                              colorFilter: .mode(isFavorite ? AppColors.primaryOrange : AppColors.blackColor, .srcIn),
-                            ),*/
-                          ),
-                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              //product.name
-              Text('', style: AppTextStyles.productName, maxLines: 1, overflow: .ellipsis,),
-              // _buildPriceRow(price: product.price, oldPrice: product.oldPrice),
+              Text(product.name, style: AppTextStyles.productName, maxLines: 1, overflow: .ellipsis,),
+              _buildPriceRow(price: product.price, oldPrice: product.oldPrice),
             ],
           ),
         ),
@@ -299,5 +292,136 @@ class _HomeScreenBody extends StatelessWidget {
       buffer.write(digits[i]);
     }
     return buffer.toString();
+  }
+}
+
+class _WavingHandIcon extends StatefulWidget {
+  const _WavingHandIcon();
+
+  @override
+  State<_WavingHandIcon> createState() => _WavingHandIconState();
+}
+
+class _WavingHandIconState extends State<_WavingHandIcon> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _rotation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+    _rotation = Tween<double>(begin: -0.025, end: 0.03).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      turns: _rotation,
+      alignment: Alignment.bottomCenter,
+      child: SvgPicture.asset(AssetRes.icHandWave),
+    );
+  }
+}
+
+class _FavoriteHeartButton extends StatefulWidget {
+  const _FavoriteHeartButton({required this.isFavorite, required this.onTap});
+
+  final bool isFavorite;
+  final VoidCallback onTap;
+
+  @override
+  State<_FavoriteHeartButton> createState() => _FavoriteHeartButtonState();
+}
+
+class _FavoriteHeartButtonState extends State<_FavoriteHeartButton> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: AppMotion.normal);
+    _scale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1, end: 1.25), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.25, end: 1), weight: 60),
+    ]).animate(CurvedAnimation(parent: _controller, curve: AppMotion.bounce));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    widget.onTap();
+    _controller.forward(from: 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      child: ScaleTransition(
+        scale: _scale,
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: AppColors.whiteColor, shape: .circle),
+          child: Padding(
+            padding: .all(5),
+            child: AnimatedSwitcher(
+              duration: AppMotion.fast,
+              switchInCurve: AppMotion.curve,
+              switchOutCurve: AppMotion.curve,
+              transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+              child: SvgPicture.asset(
+                AssetRes.icHeart,
+                key: ValueKey(widget.isFavorite),
+                colorFilter: .mode(widget.isFavorite ? AppColors.primaryOrange : AppColors.blackColor, .srcIn),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StaggeredFadeSlide extends StatelessWidget {
+  const _StaggeredFadeSlide({required this.index, required this.child});
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final staggerIndex = index.clamp(0, AppMotion.staggerMaxIndex);
+    final start = staggerIndex * 0.08;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: AppMotion.slow + AppMotion.staggerStep * staggerIndex,
+      curve: Interval(start.clamp(0.0, 0.5), 1, curve: AppMotion.curve),
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 16 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
   }
 }
