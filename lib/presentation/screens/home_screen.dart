@@ -67,10 +67,13 @@ class _HomeScreenBody extends StatelessWidget {
 
   Widget _buildHeaderAction({required String icon}) {
     return DecoratedBox(
-      decoration: BoxDecoration(color: AppColors.headerCircle, shape: .circle),
+      //headerCircle, .circle
+      decoration: BoxDecoration(color: Colors.transparent, shape: .circle),
       child: Padding(
         padding: .all(10.5),
-        child: SvgPicture.asset(icon, colorFilter: .mode(AppColors.blackColor, .srcIn),),
+        //icons, blackColor
+        // child: const SizedBox(),
+        // child: SvgPicture.asset(icon, colorFilter: .mode(AppColors.blackColor, .srcIn),),
       ),
     );
   }
@@ -83,11 +86,12 @@ class _HomeScreenBody extends StatelessWidget {
         Row(
           spacing: 4,
           children: [
-            Text('${StringConst.greetingPrefix}${StringConst.userName}', style: AppTextStyles.greeting,),
-            SvgPicture.asset(AssetRes.icHandWave,),
+            //${StringConst.greetingPrefix}${StringConst.userName}, greeting,
+            //icHandWave
           ],
         ),
-        Text(StringConst.startShopping, style: AppTextStyles.subtitle,),
+        //startShopping
+        Text('', style: AppTextStyles.subtitle,),
       ],
     );
   }
@@ -114,7 +118,8 @@ class _HomeScreenBody extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(color: offer.backgroundColor, borderRadius: .circular(NumberConstant.radiusLarge)),
+      //offer.backgroundColor
+      decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.radiusLarge)),
       clipBehavior: .hardEdge,
       child: Stack(
         children: [
@@ -122,7 +127,8 @@ class _HomeScreenBody extends StatelessWidget {
             Positioned(
               right: -8,
               bottom: -4,
-              child: Image.asset(offer.image!, height: height * 0.85, fit: .contain,),
+              child: const SizedBox(),
+              // child: Image.asset(offer.image!, height: height * 0.85, fit: .contain,),
             ),
           Padding(
             padding: .fromLTRB(19, 24, 19, 16),
@@ -132,13 +138,16 @@ class _HomeScreenBody extends StatelessWidget {
               children: [
                 SizedBox(
                   width: width * 0.55,
-                  child: Text(offer.title, style: AppTextStyles.offerTitle,),
+                  //offer.title
+                  child: Text('', style: AppTextStyles.offerTitle,),
                 ),
                 DecoratedBox(
-                  decoration: BoxDecoration(color: offer.ctaBackgroundColor, borderRadius: .circular(NumberConstant.radiusPill)),
+                  //ctaBackgroundColor
+                  decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.radiusPill)),
                   child: Padding(
                     padding: .symmetric(horizontal: 16, vertical: 10),
-                    child: Text(offer.cta, style: AppTextStyles.offerCta.copyWith(color: offer.ctaTextColor),),
+                    //offer.cta
+                    child: Text('', style: AppTextStyles.offerCta.copyWith(color: offer.ctaTextColor),),
                   ),
                 ),
               ],
@@ -153,8 +162,10 @@ class _HomeScreenBody extends StatelessWidget {
     return Row(
       mainAxisAlignment: .spaceBetween,
       children: [
-        Text(StringConst.topCategories, style: AppTextStyles.sectionTitle,),
-        Text(StringConst.seeAll, style: AppTextStyles.seeAll,),
+        //topCategories
+        //seeAll
+        Text('', style: AppTextStyles.sectionTitle,),
+        Text('', style: AppTextStyles.seeAll,),
       ],
     );
   }
@@ -172,17 +183,18 @@ class _HomeScreenBody extends StatelessWidget {
                 aspectRatio: NumberConstant.categoryAspectRatio,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: provider.selectedCategoryIndex == i ? AppColors.primaryOrangeAlt : AppColors.surfaceAlt,
+                    // color: provider.selectedCategoryIndex == i ? AppColors.primaryOrangeAlt : AppColors.surfaceAlt,
                     borderRadius: .circular(NumberConstant.radiusSmall),
-                    border: .all(color: AppColors.borderColor, width: NumberConstant.categoryBorderWidth),
+                    // border: .all(color: AppColors.borderColor, width: NumberConstant.categoryBorderWidth),
                   ),
                   child: Center(
                     child: Padding(
                       padding: .all(12),
-                      child: SvgPicture.asset(
+                      child: const SizedBox(),
+                      /*child: SvgPicture.asset(
                         AppData.categories[i].icon,
                         colorFilter: .mode(provider.selectedCategoryIndex == i ? AppColors.whiteColor : AppColors.blackColor, .srcIn),
-                      ),
+                      ),*/
                     ),
                   ),
                 ),
@@ -213,7 +225,8 @@ class _HomeScreenBody extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.push(NamedRoutes.productDetail.productPath(product.id)),
       child: DecoratedBox(
-        decoration: BoxDecoration(color: AppColors.surfaceColor, borderRadius: .circular(NumberConstant.radiusLarge)),
+        //surfaceColor
+        decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.radiusLarge)),
         child: Padding(
           padding: .all(12),
           child: Column(
@@ -223,7 +236,8 @@ class _HomeScreenBody extends StatelessWidget {
               Expanded(
                 child: Stack(
                   children: [
-                    Positioned.fill(child: Image.asset(product.image, fit: .contain,),),
+                    //product.image, fit.contain
+                    Positioned.fill(child: const SizedBox(),),
                     Positioned(
                       left: 0,
                       top: 0,
@@ -231,7 +245,8 @@ class _HomeScreenBody extends StatelessWidget {
                         decoration: BoxDecoration(color: AppColors.whiteColor, borderRadius: .circular(NumberConstant.radiusDiscount)),
                         child: Padding(
                           padding: .symmetric(horizontal: 6, vertical: 4),
-                          child: Text(product.discountLabel, style: AppTextStyles.discountBadge,),
+                          //product.discountLabel
+                          child: Text('', style: AppTextStyles.discountBadge,),
                         ),
                       ),
                     ),
@@ -244,10 +259,11 @@ class _HomeScreenBody extends StatelessWidget {
                           decoration: BoxDecoration(color: AppColors.whiteColor, shape: .circle),
                           child: Padding(
                             padding: .all(5),
-                            child: SvgPicture.asset(
+                            child: SizedBox(),
+                            /*child: SvgPicture.asset(
                               AssetRes.icHeart,
                               colorFilter: .mode(isFavorite ? AppColors.primaryOrange : AppColors.blackColor, .srcIn),
-                            ),
+                            ),*/
                           ),
                         ),
                       ),
@@ -255,8 +271,9 @@ class _HomeScreenBody extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(product.name, style: AppTextStyles.productName, maxLines: 1, overflow: .ellipsis,),
-              _buildPriceRow(price: product.price, oldPrice: product.oldPrice),
+              //product.name
+              Text('', style: AppTextStyles.productName, maxLines: 1, overflow: .ellipsis,),
+              // _buildPriceRow(price: product.price, oldPrice: product.oldPrice),
             ],
           ),
         ),

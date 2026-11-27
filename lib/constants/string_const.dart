@@ -3,7 +3,7 @@ class StringConst {
   static const appFontFamily = 'Urbanist';
 
   static const greetingPrefix = 'Hello ';
-  static const userName = 'Fola';
+  static const userName = 'Sheraz';
   static const startShopping = "Let's start shopping!";
   static const topCategories = 'Top Categories';
   static const seeAll = 'See All';
